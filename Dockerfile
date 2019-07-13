@@ -2,7 +2,7 @@ FROM php:7.2-cli
 
 MAINTAINER au
 
-LABEL product=swoole-ops-server
+LABEL product=swoole-server
 
 ENV PHPREDIS_VER=4.3.0 SWOOLE_VER=4.3.5
 
