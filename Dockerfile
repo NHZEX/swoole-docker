@@ -28,8 +28,8 @@ RUN apt-get update && apt-get install -y \
 
 # install php pdo_mysql opcache
 # WARNING: Disable opcache-cli if you run you php
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
-    docker-php-ext-install \
+RUN docker-php-ext-configure gd --with-freetype-dir --with-jpeg-dir && \
+    docker-php-ext-install -j$(nproc) \
     iconv \
     gd \
     pdo_mysql \
@@ -52,7 +52,7 @@ RUN set -x \
     && tar zxvf /tmp/redis.tar.gz -C redis --strip-components=1 && cd /tmp/redis \
     && phpize \
     && ./configure \
-    && make && make install \
+    && make -j$(nproc) && make install \
     && docker-php-ext-enable redis \
     && rm -rf /tmp/*
 
@@ -69,7 +69,7 @@ RUN set -x \
     --enable-http2  \
     --enable-mysqlnd \
     --enable-sockets \
-    && make && make install \
+    && make -j$(nproc) && make install \
     && docker-php-ext-enable swoole \
     && rm -rf /tmp/*
 
