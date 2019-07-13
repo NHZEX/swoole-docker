@@ -10,7 +10,7 @@ ENV PHPREDIS_VER=4.3.0 SWOOLE_VER=4.3.5
 RUN apt-get update \
         && apt-get install -y procps \
         libfreetype6-dev libjpeg62-turbo-dev libpng-dev libwebp-dev libxpm-dev \
-        libssh-dev libpcre3 libpcre3-dev libnghttp2-dev libhiredis-dev libgmp-dev \
+        libgmp-dev libssh-dev libpcre3 libpcre3-dev libzip-dev\
         openssl curl wget zip unzip git \
         && apt autoremove \
         && apt clean
@@ -19,13 +19,14 @@ RUN apt-get update \
 # WARNING: Disable opcache-cli if you run you php
 RUN docker-php-source extract \
     && docker-php-ext-configure gd \
-    --with-jpeg-dir --with-png-dir --with-xpm-dir --with-webp-dir --with-freetype-dir=/usr/include \
+    --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-xpm-dir=/usr/include \
+    --with-webp-dir=/usr/include --with-freetype-dir=/usr/include \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install -j$(nproc) iconv pdo_mysql mysqli mbstring json sockets pcntl gmp exif bcmath zip \
     && docker-php-source delete
 
 #install php redie
-RUN set -x \
+RUN set -eux \
     && cd /tmp \
     && curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/${PHPREDIS_VER}.tar.gz \
     && mkdir -p /tmp/redis \
@@ -38,7 +39,7 @@ RUN set -x \
 
 # install php swoole
 #TIP: it always get last stable version of swoole coroutine.
-RUN set -x \
+RUN set -eux \
     && cd /tmp \
     && curl -L -o /tmp/swoole.tar.gz https://github.com/swoole/swoole-src/archive/v${SWOOLE_VER}.tar.gz \
     && mkdir -p /tmp/swoole \
