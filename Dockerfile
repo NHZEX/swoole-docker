@@ -15,7 +15,8 @@ RUN apt-get update \
     openssl curl wget zip unzip git \
     && apt autoremove \
     && apt clean \
-    && docker-php-ext-configure gd --with-freetype-dir --with-jpeg-dir \
+    && docker-php-ext-configure gd --with-gd --with-webp-dir--with-jpeg-dir --with-png-dir \
+    --with-freetype-dir --with-zlib-dir --with-xpm-dir \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install -j$(nproc) iconv pdo_mysql mysqli mbstring json sockets pcntl gmp exif bcmath zip
 
