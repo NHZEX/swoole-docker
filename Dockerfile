@@ -9,12 +9,13 @@ ENV PHPREDIS_VER=4.3.0 SWOOLE_VER=4.3.5
 # install modules : GD iconv gmp
 # WARNING: Disable opcache-cli if you run you php
 RUN apt-get update \
-    && apt-get install -y procps libfreetype6-dev libjpeg62-turbo-dev libpng-dev openssl \
-    libssh-dev libpcre3 libpcre3-dev libnghttp2-dev libhiredis-dev \
-    libgmp-dev curl wget zip unzip git \
+    && apt-get install -y procps \
+    libfreetype6-dev libjpeg62-turbo-dev libpng-dev libwebp-dev libxpm-dev \
+    libssh-dev libpcre3 libpcre3-dev libnghttp2-dev libhiredis-dev libgmp-dev \
+    openssl curl wget zip unzip git \
     && apt autoremove \
     && apt clean \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-configure gd --with-freetype-dir --with-jpeg-dir \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install -j$(nproc) iconv pdo_mysql mysqli mbstring json sockets pcntl gmp exif bcmath zip
 
