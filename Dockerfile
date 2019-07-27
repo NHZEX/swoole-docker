@@ -4,13 +4,13 @@ MAINTAINER au
 
 LABEL product=php-swoole-server
 
-ENV PHPREDIS_VER=4.3.0 SWOOLE_VER=4.3.5
+ENV PHPREDIS_VER=4.3.0 SWOOLE_VER=4.4.2
 
-ARG mirror="0"
+ARG CN="0"
 
 # install modules
 RUN set -eux \
-    && ([ "${mirror}" = "0" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories) \
+    && ([ "${CN}" = "0" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories) \
     && apk --no-cache update \
     && apk add --no-cache freetype libpng libjpeg-turbo gmp openssl libssh libzip \
     && apk add --no-cache --virtual .fetch-dev freetype-dev libjpeg-turbo-dev libwebp-dev libxpm-dev gmp-dev openssl-dev \
