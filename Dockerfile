@@ -1,10 +1,10 @@
-FROM php:7.2.20-cli-alpine3.10
+FROM php:7.2.21-cli-alpine3.10
 
 MAINTAINER au
 
 LABEL product=php-swoole-server
 
-ENV PHPREDIS_VER=4.3.0 SWOOLE_VER=4.4.2
+ENV PHPREDIS_VER=4.3.0 SWOOLE_VER=4.4.4
 
 ARG CN="0"
 
