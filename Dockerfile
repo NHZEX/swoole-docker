@@ -1,4 +1,4 @@
-FROM php:7.2.21-cli-alpine3.10
+FROM php:7.2.22-cli-alpine3.10
 
 MAINTAINER au
 
