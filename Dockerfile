@@ -37,10 +37,8 @@ RUN set -eux \
     && curl -L -o swoole.tar.gz https://github.com/swoole/swoole-src/archive/v${SWOOLE_VER}.tar.gz \
     && mkdir swoole && tar zxvf swoole.tar.gz -C swoole --strip-components=1 && cd swoole \
     && phpize && ./configure \
-    --enable-openssl  \
-    --enable-http2  \
-    --enable-mysqlnd \
-    --enable-sockets \
+    --enable-openssl \
+    --enable-http2 \
     && make -j$(nproc) && make install \
 # 保证加载顺序为最后一个
     && docker-php-ext-enable --ini-name z-php-ext-swoole.ini swoole \
