@@ -1,10 +1,10 @@
-FROM php:7.2.24-cli-alpine3.10
+FROM php:7.3-cli-alpine
 
 MAINTAINER au
 
 LABEL product=php-swoole-server
 
-ENV PHPREDIS_VER=5.1.1 SWOOLE_VER=4.4.12
+ENV PHPREDIS_VER=5.1.1 SWOOLE_VER=4.4.14
 
 ARG CN="0"
 
@@ -13,7 +13,7 @@ RUN set -eux \
     && ([ "${CN}" = "0" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories) \
     && apk --no-cache update \
     && apk add --no-cache freetype libpng libjpeg-turbo gmp openssl libssh libzip \
-    && apk add --no-cache --virtual .fetch-dev freetype-dev libjpeg-turbo-dev libwebp-dev libxpm-dev gmp-dev openssl-dev \
+    && apk add --no-cache --virtual .fetch-dev freetype-dev libjpeg-turbo-dev libwebp-dev libxpm-dev gmp-dev openssl-dev zlib-dev libzip-dev \
     && apk add --no-cache --virtual .fetch-deps curl wget procps ${PHPIZE_DEPS} \
 # install php modules
     && docker-php-source extract \
@@ -21,6 +21,7 @@ RUN set -eux \
     --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-xpm-dir=/usr/include \
     --with-webp-dir=/usr/include --with-freetype-dir=/usr/include \
     && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-configure zip --with-libzip \
     && docker-php-ext-install -j$(nproc) iconv pdo_mysql mysqli mbstring json sockets pcntl gmp exif bcmath zip \
     && docker-php-ext-enable sockets \
 # compile php modules
@@ -41,7 +42,7 @@ RUN set -eux \
     --enable-mysqlnd \
     --enable-sockets \
     && make -j$(nproc) && make install \
-# 保证启动顺序为最后一个
+# 保证加载顺序为最后一个
     && docker-php-ext-enable --ini-name z-php-ext-swoole.ini swoole \
 # clear up
     && rm -rf /tmp/extend/* \
