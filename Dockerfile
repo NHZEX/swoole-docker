@@ -1,12 +1,16 @@
 FROM php:7.3-cli-alpine
 
-MAINTAINER au
+MAINTAINER auooru
 
 LABEL product=php-swoole-server
 
-ENV PHPREDIS_VER=5.1.1 SWOOLE_VER=4.4.14
+ENV PHPREDIS_VER=5.1.1 SWOOLE_VER=4.4.16
 
 ARG CN="0"
+
+# default installed: ctype curl date dom fileinfo filter ftp hash iconv json libxml mbstring openssl
+#                  : pcre PDO pdo_splite Phar posix readline Reflection session SimpleXML sodium SPL
+#                  : sqlite3 standard tokenizer xml xmlreader xmlwriter zlib
 
 # install modules
 RUN set -eux \
@@ -20,30 +24,19 @@ RUN set -eux \
     && docker-php-ext-configure gd \
     --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-xpm-dir=/usr/include \
     --with-webp-dir=/usr/include --with-freetype-dir=/usr/include \
-    && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-configure zip --with-libzip \
-    && docker-php-ext-install -j$(nproc) iconv pdo_mysql mysqli mbstring json sockets pcntl gmp exif bcmath zip \
-    && docker-php-ext-enable sockets \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install -j$(nproc) pdo_mysql mysqli sockets pcntl gmp exif bcmath zip \
 # compile php modules
-    && mkdir -p /tmp/extend && cd /tmp/extend \
+    && cd /usr/src/php/ext \
 #install php redie
-    && curl -L -o redis.tar.gz https://github.com/phpredis/phpredis/archive/${PHPREDIS_VER}.tar.gz \
-    && mkdir redis && tar zxvf redis.tar.gz -C redis --strip-components=1 && cd redis \
-    && phpize && ./configure \
-    && make -j$(nproc) && make install \
+    && pecl install redis-${PHPREDIS_VER} \
     && docker-php-ext-enable redis \
-    && cd /tmp/extend \
 # install php swoole
-    && curl -L -o swoole.tar.gz https://github.com/swoole/swoole-src/archive/v${SWOOLE_VER}.tar.gz \
-    && mkdir swoole && tar zxvf swoole.tar.gz -C swoole --strip-components=1 && cd swoole \
-    && phpize && ./configure \
-    --enable-openssl \
-    --enable-http2 \
-    && make -j$(nproc) && make install \
-# 保证加载顺序为最后一个
-    && docker-php-ext-enable --ini-name z-php-ext-swoole.ini swoole \
+    && pecl bundle swoole-${SWOOLE_VER} \
+    && docker-php-ext-configure swoole --enable-openssl --enable-http2 \
+    && docker-php-ext-install -j$(nproc) swoole \
 # clear up
-    && rm -rf /tmp/extend/* \
     && docker-php-source delete \
     && apk del --no-network .fetch-deps
 
