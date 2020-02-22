@@ -16,9 +16,9 @@ ARG CN="0"
 RUN set -eux \
     && ([ "${CN}" = "0" ] || sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories) \
     && apk --no-cache update \
-    && apk add --no-cache freetype libpng libjpeg-turbo gmp openssl libssh libzip \
-    && apk add --no-cache --virtual .fetch-dev freetype-dev libjpeg-turbo-dev libwebp-dev libxpm-dev gmp-dev openssl-dev zlib-dev libzip-dev \
     && apk add --no-cache --virtual .fetch-deps curl wget procps ${PHPIZE_DEPS} \
+    && apk add --no-cache libstdc++ freetype libpng libjpeg-turbo gmp openssl libssh libzip \
+    && apk add --no-cache --virtual .fetch-dev freetype-dev libjpeg-turbo-dev libwebp-dev libxpm-dev gmp-dev openssl-dev zlib-dev libzip-dev \
 # install php modules
     && docker-php-source extract \
     && docker-php-ext-configure gd \
