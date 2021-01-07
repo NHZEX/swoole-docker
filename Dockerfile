@@ -37,7 +37,7 @@ RUN set -eux \
     && docker-php-ext-configure swoole \
      --enable-openssl \
      --enable-http2 \
-     --enable-swoole-json
+     --enable-swoole-json \
     && docker-php-ext-install -j$(nproc) swoole \
 # clear up
     && docker-php-source delete \
