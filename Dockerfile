@@ -1,10 +1,10 @@
-FROM php:7.3-cli-alpine
+FROM php:7.4.13-cli-alpine
 
 MAINTAINER auooru
 
 LABEL product=php-swoole-server
 
-ENV PHPREDIS_VER=5.1.1 SWOOLE_VER=4.4.16
+ENV PHPREDIS_VER=5.3.2 SWOOLE_VER=4.5.10
 
 ARG CN="0"
 
@@ -29,16 +29,21 @@ RUN set -eux \
     && docker-php-ext-install -j$(nproc) pdo_mysql mysqli sockets pcntl gmp exif bcmath zip \
 # compile php modules
     && cd /usr/src/php/ext \
-#install php redie
+# install php redie
     && pecl install redis-${PHPREDIS_VER} \
     && docker-php-ext-enable redis \
 # install php swoole
     && pecl bundle swoole-${SWOOLE_VER} \
-    && docker-php-ext-configure swoole --enable-openssl --enable-http2 \
+    && docker-php-ext-configure swoole \
+     --enable-openssl \
+     --enable-http2 \
+     --enable-swoole-json
     && docker-php-ext-install -j$(nproc) swoole \
 # clear up
     && docker-php-source delete \
-    && apk del --no-network .fetch-deps
+    && apk del --no-network .fetch-deps \
+    && php -v \
+    && php -m
 
 # set China timezone
 RUN apk add --no-cache tzdata \
