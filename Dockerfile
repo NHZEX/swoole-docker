@@ -22,9 +22,8 @@ RUN set -eux \
 # install php modules
     && docker-php-source extract \
     && docker-php-ext-configure gd \
-    --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-xpm-dir=/usr/include \
-    --with-webp-dir=/usr/include --with-freetype-dir=/usr/include \
-    && docker-php-ext-configure zip --with-libzip \
+        --with-freetype --with-jpeg \
+        --with-webp --with-xpm \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install -j$(nproc) pdo_mysql mysqli sockets pcntl gmp exif bcmath zip \
 # compile php modules
@@ -35,9 +34,9 @@ RUN set -eux \
 # install php swoole
     && pecl bundle swoole-${SWOOLE_VER} \
     && docker-php-ext-configure swoole \
-     --enable-openssl \
-     --enable-http2 \
-     --enable-swoole-json \
+        --enable-openssl \
+        --enable-http2 \
+        --enable-swoole-json \
     && docker-php-ext-install -j$(nproc) swoole \
 # clear up
     && docker-php-source delete \
