@@ -1,10 +1,10 @@
-FROM php:7.4.13-cli-alpine
+FROM php:7.4.14-cli-alpine
 
 MAINTAINER auooru
 
 LABEL product=php-swoole-server
 
-ENV PHPREDIS_VER=5.3.2 SWOOLE_VER=4.5.10
+ENV PHPREDIS_VER=5.3.2 SWOOLE_VER=4.5.11
 
 ARG CN="0"
 
